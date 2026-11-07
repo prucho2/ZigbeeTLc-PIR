@@ -9,6 +9,25 @@
 #define _SENSOR_PIR_H_
 
 
+
+/*
+ * Read-only diagnostics, only compiled for the development PIR board.
+ * Counts are sampled GPIO transitions, not guaranteed hardware interrupts.
+ * Resets on device reboot; these fields are deliberately not written to flash.
+ */
+#if PIR_DIAG_ENABLE && (DEV_SERVICES & SERVICE_PIR)
+typedef struct {
+	u32 raw_rise;
+	u32 raw_fall;
+	u32 occupancy_on;
+	u32 occupancy_off;
+	u32 timer_callbacks;
+	u32 light_above_target;
+	u32 report_requested;
+} pir_diag_t;
+extern volatile pir_diag_t g_pir_diag;
+#endif
+
 void task_pir(void);
 
 
