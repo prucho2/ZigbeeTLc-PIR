@@ -142,7 +142,11 @@
 #define APP_BUILD				0x18	//BCD app build "0.4"
 #else
 #define APP_RELEASE				0x01	//BCD app release "0.1"
-#define APP_BUILD				0x40	//BCD app build "3.9"
+#if (BOARD == BOARD_ZG204ZL)
+#define APP_BUILD				0x41	// BCD version 0.1.4.1-dev (ZG-204ZL only)
+#else
+#define APP_BUILD				0x40	// BCD version 0.1.4.0 (other boards)
+#endif
 #endif
 #define STACK_RELEASE			0x30	//BCD stack release 3.0
 #define STACK_BUILD				0x01	//BCD stack build 01
