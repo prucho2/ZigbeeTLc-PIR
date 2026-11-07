@@ -19,7 +19,7 @@ jobs:
         run: make install
       - name: Build ZG-204ZL test firmware
         run: |
-          make -j2 PROJECT_NAME=ZG204ZL VERSION_BIN=_pir_diag POJECT_DEF="-DBOARD=BOARD_ZG204ZL" ZNAME=ZG-204ZL-PIR-DIAG
+          make -j2 PROJECT_NAME=ZG204ZL VERSION_BIN=_0141_dev POJECT_DEF="-DBOARD=BOARD_ZG204ZL" ZNAME=ZG-204ZL-PIR-DIAG
       - name: Collect firmware checksums
         run: |
           sha256sum bin/ZG204ZL_0141_dev.bin bin/1141-0232-01413001-ZG204ZL.zigbee > bin/ZG204ZL_0141_dev.sha256
