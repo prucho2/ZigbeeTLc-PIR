@@ -19,6 +19,7 @@
 #include "sensor_rc2417.h"
 #endif
 #include "app_ui.h"
+#include "sensor_pir.h"
 
 /*
  * PIR diagnostic counters for the wired test board.
@@ -26,15 +27,6 @@
  * A debugger may inspect g_pir_diag while the board is connected.
  */
 #if PIR_DIAG_ENABLE
-typedef struct {
-	u32 raw_rise;
-	u32 raw_fall;
-	u32 occupancy_on;
-	u32 occupancy_off;
-	u32 timer_callbacks;
-	u32 light_above_target;
-	u32 report_requested;
-} pir_diag_t;
 volatile pir_diag_t g_pir_diag = {0};
 
 #define PIR_DIAG_INC(field) (++g_pir_diag.field)
