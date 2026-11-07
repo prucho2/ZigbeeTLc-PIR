@@ -68,7 +68,7 @@ GPIO_PD7 - LED to +Vbat
 // PIR
 // Development test build: RAM-only diagnostic counters; no extra Zigbee traffic.
 #define PIR_DIAG_ENABLE	1
-#define DEF_OCCUPANCY_DELAY		35	// sec (PIR sensor)
+#define DEF_OCCUPANCY_DELAY		2	// sec (PIR sensor); used only if no persisted setting exists
 
 #define GPIO_PIR			GPIO_PD4
 #define PIR_ON				1
