@@ -585,6 +585,7 @@ const zclAttrInfo_t occupancy_attrTbl[] = {
 	{ 0xF104, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.timer_callbacks },
 	{ 0xF105, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.light_above_target },
 	{ 0xF106, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.report_requested },
+	{ 0xF107, ZCL_DATA_TYPE_UINT8, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.raw_level },
 #endif
 	{ ZCL_ATTRID_GLOBAL_CLUSTER_REVISION, ZCL_DATA_TYPE_UINT16,  ACCESS_CONTROL_READ,  (u8*)&zcl_attr_global_clusterRevision},
 };
