@@ -22,12 +22,12 @@ jobs:
           make -j2 PROJECT_NAME=ZG204ZL VERSION_BIN=_pir_diag POJECT_DEF="-DBOARD=BOARD_ZG204ZL" ZNAME=ZG-204ZL-PIR-DIAG
       - name: Collect firmware checksums
         run: |
-          sha256sum bin/ZG204ZL_pir_diag.bin bin/ZG204ZL.zigbee > bin/ZG204ZL_pir_diag.sha256
+          sha256sum bin/ZG204ZL_pir_diag.bin bin/1141-0232-01403001-ZG204ZL.zigbee > bin/ZG204ZL_pir_diag.sha256
       - name: Upload test firmware artifacts (NOT automatically flashed)
         uses: actions/upload-artifact@v4
         with:
           name: zg204zl-pir-diagnostic
           path: |
             bin/ZG204ZL_pir_diag.bin
-            bin/ZG204ZL.zigbee
+            bin/1141-0232-01403001-ZG204ZL.zigbee
             bin/ZG204ZL_pir_diag.sha256
