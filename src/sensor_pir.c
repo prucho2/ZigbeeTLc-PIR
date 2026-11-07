@@ -91,6 +91,7 @@ void task_pir(void) {
 	zcl_onOffAttr_t *pOnOff = zcl_onoffAttrGet();
 	u8 pir_on = gpio_read(GPIO_PIR)? PIR_ON : !PIR_ON;
 #if PIR_DIAG_ENABLE
+		g_pir_diag.raw_level = pir_on;
 	if(pir_on != zcl_occupAttr.state) {
 		if(pir_on) PIR_DIAG_INC(raw_rise);
 		else PIR_DIAG_INC(raw_fall);
