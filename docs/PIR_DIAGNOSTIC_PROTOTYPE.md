@@ -21,7 +21,22 @@ The branch enables `PIR_DIAG_ENABLE` in `src/board_zg204zl.h`.
 - `light_above_target`: motion-on events with illuminance above configured target.
 - `report_requested`: occupancy paths that request reporting; **not a count of transmitted frames or Z2M acknowledgements**.
 
-These counters are not exposed in Z2M, are not persisted to Flash and do not generate any extra Zigbee packets. The counters can be inspected with suitable debugging tools; **Telink Burning Tool alone is not established as a live RAM-inspection interface**. A separate diagnostic transport is required before they are usable during normal HA TEST testing. This first code change is intentionally non-invasive; it does not yet resolve lost motion.
+The counters are **also exposed as read-only Zigbee attributes**, on cluster `msOccupancySensing` (0x0406), endpoint 1. The existing standard attributes (`occupancy`, `pirOToUDelay`) remain intact. The debug fields are not reported automatically, and no custom Z2M converter is required merely to issue a raw attribute read.
+
+| Hex attribute | Diagnostic field | Data type |
+| --- | --- | --- |
+| 0xF100 | raw_rise | uint32 |
+| 0xF101 | raw_fall | uint32 |
+| 0xF102 | occupancy_on | uint32 |
+| 0xF103 | occupancy_off | uint32 |
+| 0xF104 | timer_callbacks | uint32 |
+| 0xF105 | light_above_target | uint32 |
+| 0xF106 | report_requested | uint32 |
+| 0xF107 | raw_level | uint8 |
+
+To try reading on HA TEST via Zigbee2MQTT, first pair the test PIR. Use its **Dev console** to read cluster `msOccupancySensing` (0x0406), endpoint 1, one numeric attribute (e.g. 0xF100 = 61696). Whether the installed Z2M UI accepts numeric custom attribute IDs requires testing; an external converter may be needed for a convenient permanent dashboard. **Do not issue automatic reads every second**: the PIR is battery powered and asleep much of the time. Polling should be occasional and manual, preferably shortly after a wakeup, and a timeout does not prove that the firmware is faulty.
+
+Counters reset when firmware restarts. The `raw_level` is the most recently sampled GPIO state, not continuously streaming motion; narrow pulses can still be missed. `report_requested` counts requests to check reporting but is **not proof of transmission or coordinator acknowledgement**. This build is diagnostic only and does not yet fix lost motion.
 
 ## Build
 The development branch contains a GitHub Actions job (`.github/workflows/build-zg204zl-pir.yml`) to compile a test binary from bundled Telink SDK/toolchain. Check the workflow result and binary checksums before attempting to flash; committing workflow source does not guarantee a successful build. Generated artifacts are not flashed automatically.
