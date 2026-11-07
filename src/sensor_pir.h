@@ -24,6 +24,7 @@ typedef struct {
 	u32 timer_callbacks;
 	u32 light_above_target;
 	u32 report_requested;
+	u8 raw_level; /* latest sampled PIR logic level, 0/1 */
 } pir_diag_t;
 extern volatile pir_diag_t g_pir_diag;
 #endif
