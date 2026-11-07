@@ -20,12 +20,35 @@
 #endif
 #include "app_ui.h"
 
+/*
+ * PIR diagnostic counters for the wired test board.
+ * Counters live in RAM only and do not change Zigbee reporting or radio traffic.
+ * A debugger may inspect g_pir_diag while the board is connected.
+ */
+#if PIR_DIAG_ENABLE
+typedef struct {
+	u32 raw_rise;
+	u32 raw_fall;
+	u32 occupancy_on;
+	u32 occupancy_off;
+	u32 timer_callbacks;
+	u32 light_above_target;
+	u32 report_requested;
+} pir_diag_t;
+volatile pir_diag_t g_pir_diag = {0};
+
+#define PIR_DIAG_INC(field) (++g_pir_diag.field)
+#else
+#define PIR_DIAG_INC(field) ((void)0)
+#endif
+
 
 #if !USE_SENSOR_XBR818
 /*******************************************************************
  * @brief	Occupancy timer callback
  */
 static s32 occupancyTimerCb(void *arg) {
+	PIR_DIAG_INC(timer_callbacks);
 #if USE_SENSOR_RC2417
 	u8 pir_on = gpio_read(GPIO_PIR)? PIR_ON : !PIR_ON;
 	u8 radar_on = rc2417_read_out();
@@ -50,6 +73,8 @@ static s32 occupancyTimerCb(void *arg) {
 	}
 #endif
 	// occupancy timer off
+	PIR_DIAG_INC(occupancy_off);
+	PIR_DIAG_INC(report_requested);
 	zcl_occupAttr.occupancy = 0;
 	g_sensorAppCtx.reportFlg = FLG_CHECK_REPORT; // check report table
 #if USE_BLINK_LED
@@ -73,6 +98,12 @@ static s32 occupancyTimerCb(void *arg) {
 void task_pir(void) {
 	zcl_onOffAttr_t *pOnOff = zcl_onoffAttrGet();
 	u8 pir_on = gpio_read(GPIO_PIR)? PIR_ON : !PIR_ON;
+#if PIR_DIAG_ENABLE
+	if(pir_on != zcl_occupAttr.state) {
+		if(pir_on) PIR_DIAG_INC(raw_rise);
+		else PIR_DIAG_INC(raw_fall);
+	}
+#endif
 #if USE_SENSOR_XBR818
 	/* XBR818 handles the hold time in hardware; delay==0 is valid. */
 #else
@@ -93,6 +124,8 @@ void task_pir(void) {
 				if(zcl_occupAttr.occupancy != occ) {
 					// event occupancy
 					// occupancy on
+					PIR_DIAG_INC(occupancy_on);
+					PIR_DIAG_INC(report_requested);
 					zcl_occupAttr.occupancy = occ;
 					g_sensorAppCtx.reportFlg = FLG_CHECK_REPORT; // check report table
 #ifdef ZCL_ILLUMINANCE_LEVEL_SENSING
@@ -102,6 +135,9 @@ void task_pir(void) {
 #endif
 #endif
 					read_illumi_sensor();
+					if(g_zcl_illuminanceAttrs.levelStatus == ILSC_ABOVE_TARGET) {
+						PIR_DIAG_INC(light_above_target);
+					}
 					if(g_zcl_illuminanceAttrs.levelStatus != ILSC_ABOVE_TARGET)
 					// if illuminance < minlevel
 #endif
