@@ -9,6 +9,9 @@
 #include "zcl_dehumidification_control.h"
 #endif
 #include "app_main.h"
+#if PIR_DIAG_ENABLE && (DEV_SERVICES & SERVICE_PIR)
+#include "sensor_pir.h"
+#endif
 #include "lcd.h"
 #if USE_BLE
 #include "zigbee_ble_switch.h"
@@ -572,6 +575,16 @@ const zclAttrInfo_t occupancy_attrTbl[] = {
 	{ ZCL_ATTRID_RADAR_ZONE3_M_THRES,  ZCL_DATA_TYPE_UINT8,   ACCESS_CONTROL_READ | ACCESS_CONTROL_WRITE,  (u8*)&zcl_occupAttr.zone3_m_thres},
 	{ ZCL_ATTRID_RADAR_ZONE3_S_THRES,  ZCL_DATA_TYPE_UINT8,   ACCESS_CONTROL_READ | ACCESS_CONTROL_WRITE,  (u8*)&zcl_occupAttr.zone3_s_thres},
 	{ ZCL_ATTRID_RADAR_TRITH,          ZCL_DATA_TYPE_UINT8,   ACCESS_CONTROL_READ | ACCESS_CONTROL_WRITE,  (u8*)&zcl_occupAttr.trith},
+#endif
+#if PIR_DIAG_ENABLE && (DEV_SERVICES & SERVICE_PIR)
+	/* Development-only, read-only attribute IDs: query on demand, never auto-report. */
+	{ 0xF100, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.raw_rise },
+	{ 0xF101, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.raw_fall },
+	{ 0xF102, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.occupancy_on },
+	{ 0xF103, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.occupancy_off },
+	{ 0xF104, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.timer_callbacks },
+	{ 0xF105, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.light_above_target },
+	{ 0xF106, ZCL_DATA_TYPE_UINT32, ACCESS_CONTROL_READ, (u8*)&g_pir_diag.report_requested },
 #endif
 	{ ZCL_ATTRID_GLOBAL_CLUSTER_REVISION, ZCL_DATA_TYPE_UINT16,  ACCESS_CONTROL_READ,  (u8*)&zcl_attr_global_clusterRevision},
 };
